@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+/* ==========================================================================
+   Liquid Glass Design System (Apple-inspired for Dottoressa Andreina Botique)
+   ========================================================================== */
+
+/* 1. Neutral Frosted Glass (Header, Navigation, Floating Bars) */
+.liquid-glass-neutral {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.75);
+  box-shadow: 0 4px 20px -2px rgba(15, 35, 56, 0.03), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+/* 2. Azure-Tinted Liquid Glass (Modals, Cart Drawer, Flyout Panels) */
+.liquid-glass-azure {
+  background: rgba(246, 249, 252, 0.88);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    0 24px 48px -12px rgba(15, 35, 56, 0.12),
+    0 4px 16px -4px rgba(15, 35, 56, 0.04),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px 0 rgba(157, 189, 209, 0.15);
+}
+
+/* 3. Dark Frosted Glass (Media overlays, Video Player, PDF Reader toolbar) */
+.liquid-glass-dark {
+  background: rgba(11, 26, 43, 0.82);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 16px 36px -8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 4. Prismatic Specular Border Effect */
+.glass-border-prismatic {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 12px 32px -8px rgba(15, 35, 56, 0.08),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* 5. Delicate Pill Glass for interactive micro-controls */
+.glass-pill-control {
+  background: rgba(237, 244, 248, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.8), 0 2px 6px rgba(15, 35, 56, 0.03);
+}
+.glass-pill-control:hover {
+  background: rgba(225, 237, 245, 0.9);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Fallback for browsers that do not support backdrop-filter */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-glass-neutral {
+    background: #ffffff;
+  }
+  .liquid-glass-azure {
+    background: #f8fafc;
+  }
+  .liquid-glass-dark {
+    background: #0b1a2b;
+  }
+  .glass-pill-control {
+    background: #edf4f8;
+  }
+}
+
+/* Accessibility: respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom delicate scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

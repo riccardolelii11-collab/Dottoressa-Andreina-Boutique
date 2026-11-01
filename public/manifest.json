@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "Andreina Boutique",
+  "short_name": "Boutique",
+  "description": "Web App per prodotti e contenuti digitali della nutrizionista Andreina Olivieri. E-book, video ricette, corsi e abbonamento Premium.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["health", "lifestyle", "food", "books"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

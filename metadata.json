@@ -1,0 +1,6 @@
+{
+  "name": "Andreina Boutique",
+  "description": "Boutique digitale di contenuti ed ebook nutrizionali della Dott.ssa Andreina Olivieri. Video ricette, guide pratiche, abbonamento Premium e video corsi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
