@@ -23,6 +23,7 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
   const book4 = ebooks.find((b) => b.id.includes('colazione')) || ebooks[2];
 
   const gridImageSrc = '/assets/ebooks-grid.png';
+  const book2ImageSrc = '/assets/aistudio/Libro-componi-i-tuoi-pasti-dasporto_5c9898ec.png';
 
   return (
     <div className="w-full max-w-md md:max-w-5xl lg:max-w-6xl mx-auto bg-brand-surface text-brand-slate font-sans antialiased flex flex-col justify-between relative pb-28 md:pb-12 min-h-screen md:px-6 lg:px-8">
@@ -164,16 +165,16 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
 
           {/* Product Card 2: Componi i tuoi pasti da asporto (formato digitale) */}
           <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
-            {/* Book Cover container focusing top-right quadrant */}
+            {/* Book Cover container focusing the tablet in the center */}
             <div 
               onClick={() => book2 && onSelectProduct(book2)}
               className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
             >
               <img 
                 alt="Copertina Componi i tuoi pasti da asporto" 
-                className="w-full h-full object-cover" 
-                style={{ objectPosition: '78% 15%', transform: 'scale(1.35)', transformOrigin: '78% 15%' }} 
-                src={gridImageSrc}
+                className="w-full h-full object-cover transition-transform duration-300" 
+                style={{ objectPosition: '50% 53%', transform: 'scale(1.30)', transformOrigin: '50% 53%' }} 
+                src={book2ImageSrc}
               />
             </div>
             {/* Product Details */}

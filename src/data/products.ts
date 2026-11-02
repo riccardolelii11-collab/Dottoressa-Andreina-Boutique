@@ -216,7 +216,7 @@ export const REAL_EBOOKS: Product[] = [
     formattedPrice: '€ 12,90',
     isFree: false,
     isPremiumOnly: false,
-    coverImage: 'https://www.dottoressaandreinaolivieri.it/wp-content/uploads/2023/10/Libro-componi-i-tuoi-pasti-dasporto-642x642.png',
+    coverImage: '/assets/aistudio/Libro-componi-i-tuoi-pasti-dasporto_5c9898ec.png',
     originalUrl: 'https://www.dottoressaandreinaolivieri.it/prodotto/componi-i-tuoi-pasti-da-asporto/',
     badge: 'Best seller fuori casa',
     rating: 4.8,
