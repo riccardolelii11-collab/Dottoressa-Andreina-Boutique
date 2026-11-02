@@ -316,6 +316,8 @@ export default function App() {
               onSelectProduct={handleSelectProductId}
               allProducts={ebooks}
               onToast={showToast}
+              cartCount={cartItems.length}
+              onOpenCart={() => setIsCartOpen(true)}
             />
           )}
 

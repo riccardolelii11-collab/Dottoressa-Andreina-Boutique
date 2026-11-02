@@ -13,7 +13,7 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
   ebooks,
   onSelectProduct,
   onQuickBuy,
-  cartCount = 1,
+  cartCount = 0,
   onOpenCart,
 }) => {
   // Ordered strictly as in design reference
@@ -52,10 +52,12 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
             <svg className="w-6 h-6 stroke-[1.75]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13m-10.5 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" strokeLinecap="round" strokeLinejoin="round"></path>
             </svg>
-            {/* Badge counter */}
-            <span className="absolute top-1 right-1 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
-              {cartCount > 0 ? cartCount : 1}
-            </span>
+            {/* Badge counter - only visible when items in cart */}
+            {cartCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
+                {cartCount}
+              </span>
+            )}
           </button>
         </div>
       </header>
@@ -86,9 +88,11 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
               <svg className="w-5 h-5 stroke-[1.75]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13m-10.5 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" strokeLinecap="round" strokeLinejoin="round"></path>
               </svg>
-              <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
-                {cartCount > 0 ? cartCount : 1}
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
+                  {cartCount}
+                </span>
+              )}
             </div>
             <span className="text-xs font-semibold">Carrello</span>
           </button>

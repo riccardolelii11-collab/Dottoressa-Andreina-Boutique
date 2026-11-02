@@ -2,19 +2,13 @@ import React, { useState } from 'react';
 import { Product } from '../types';
 import { 
   ArrowLeft, 
-  Star, 
-  ShoppingBag, 
-  Download, 
   BookOpen, 
   Check, 
+  ShoppingBag, 
+  CreditCard, 
   ShieldCheck, 
-  Share2, 
-  Sparkles,
-  ExternalLink,
-  ChevronRight,
-  Clock,
-  Layers,
-  CreditCard
+  ExternalLink, 
+  Share2 
 } from 'lucide-react';
 import { ProductCoverPlaceholder } from '../components/ProductCoverPlaceholder';
 
@@ -28,6 +22,8 @@ interface ProductDetailPageProps {
   onSelectProduct: (productId: string) => void;
   allProducts: Product[];
   onToast: (msg: string) => void;
+  cartCount?: number;
+  onOpenCart?: () => void;
 }
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
@@ -40,322 +36,383 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   onSelectProduct,
   allProducts,
   onToast,
+  cartCount = 0,
+  onOpenCart,
 }) => {
   const [activeTab, setActiveTab] = useState<'content' | 'chapters' | 'excerpt'>('content');
 
   const relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 3);
 
   const handleShare = () => {
-    navigator.clipboard?.writeText(window.location.href);
-    onToast('Link del prodotto copiato negli appunti!');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      onToast('Link del libro copiato negli appunti!');
+    }
   };
 
   return (
-    <div className="space-y-10 pb-16">
+    <div className="w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-5 sm:py-8 font-sans antialiased text-brand-slate space-y-6 md:space-y-8 pb-32">
       
-      {/* Top Breadcrumb & Navigation */}
-      <div className="flex items-center justify-between">
+      {/* 1. Top Bar: Back Action + Brand Identifier + Cart Icon with Real Count */}
+      <header className="flex items-center justify-between pb-4 border-b border-brand-teal/20" data-purpose="detail-header">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-[#2b5374] hover:text-[#193752] transition-colors cursor-pointer"
+          type="button"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-brand-teal hover:text-brand-tealDark transition-colors p-1.5 -ml-1.5 rounded-lg hover:bg-white cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Torna al Catalogo E-book</span>
+          <span>Torna ai libri</span>
         </button>
 
-        <button
-          onClick={handleShare}
-          className="p-2 text-[#2b5374] bg-[#edf4f8] hover:bg-[#e1edf5] rounded-xl transition-all cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
-          title="Condividi scheda prodotto"
-        >
-          <Share2 className="w-3.5 h-3.5" />
-          <span>Condividi</span>
-        </button>
-      </div>
+        {/* Center Monogram (visible on mobile to anchor the brand) */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs">
+            <span className="font-serif font-bold text-brand-slate text-sm">A</span>
+          </div>
+          <span className="font-serif text-sm font-semibold text-brand-slate hidden sm:inline">
+            Dott.ssa Andreina Olivieri
+          </span>
+        </div>
 
-      {/* Main Grid: Left Cover & Right Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* Right actions: Share + Cart */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleShare}
+            type="button"
+            className="p-2 text-slate-500 hover:text-brand-slate bg-white rounded-full border border-slate-200/80 transition-colors shadow-2xs cursor-pointer"
+            title="Condividi scheda libro"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+
+          <button 
+            type="button"
+            onClick={onOpenCart}
+            aria-label="Carrello" 
+            className="relative p-2 rounded-full bg-white hover:bg-slate-50 border border-brand-teal/30 text-brand-slate transition-colors shadow-2xs cursor-pointer"
+          >
+            <svg className="w-5 h-5 stroke-[1.75]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13m-10.5 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
+                {cartCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* 2. Main Framed Product Showcase ("Incorniciato e Proporzionato") */}
+      <article className="editorial-card bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 border border-brand-teal/20 shadow-xs space-y-6 md:space-y-0 md:grid md:grid-cols-12 md:gap-8 items-start">
         
-        {/* Left Column: Product Cover */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="relative rounded-3xl overflow-hidden shadow-xl border border-[#cbdfe9] bg-[#fafcff] p-6 flex items-center justify-center">
+        {/* Left Column: Framed Book Cover & Physical Edition Notice */}
+        <div className="md:col-span-5 space-y-4">
+          <div className="relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-teal/20 p-5 sm:p-6 flex items-center justify-center shadow-inner">
             {product.coverImage ? (
               <img
                 src={product.coverImage}
                 alt={product.title}
                 referrerPolicy="no-referrer"
-                className="w-full max-h-[460px] object-contain drop-shadow-lg"
+                className="w-full max-h-72 sm:max-h-80 object-contain drop-shadow-md rounded-xl transition-transform hover:scale-102"
               />
             ) : (
               <ProductCoverPlaceholder product={product} aspectRatio="4/3" />
             )}
 
             {product.badge && (
-              <span className="absolute top-4 left-4 px-3 py-1 text-[11px] font-bold bg-[#2b5374] text-white rounded-lg shadow-sm">
+              <span className="absolute top-3.5 left-3.5 px-2.5 py-1 text-[10px] font-semibold bg-brand-teal text-white rounded-md shadow-xs uppercase tracking-wider">
                 {product.badge}
               </span>
             )}
           </div>
 
-          {/* Quick Preview Action */}
+          {/* Quick Preview Button */}
           <button
+            type="button"
             onClick={() => onOpenPdfReader(product)}
-            className="w-full py-3 px-4 bg-white border border-[#cbdfe9] text-[#2b5374] hover:bg-[#edf4f8] rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+            className="w-full py-2.5 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-brand-surface rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-4 h-4 text-brand-teal" />
             <span>Sfoglia Estratto di Anteprima</span>
           </button>
 
           {/* Link to Amazon if physical version exists */}
           {product.amazonUrl && (
-            <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 space-y-2">
-              <span className="text-[11px] font-bold text-amber-900 uppercase tracking-wider block">
+            <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/60 space-y-1.5">
+              <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
                 Disponibile anche in Versione Cartacea
               </span>
-              <p className="text-xs text-amber-900/80 leading-relaxed">
-                Preferisci sfogliare il libro fisico sul comodino o in cucina? Puoi ordinarlo direttamente su Amazon con spedizione rapida.
+              <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                Preferisci la versione cartacea? Puoi ordinarla direttamente su Amazon.
               </p>
               <a
                 href={product.amazonUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-950 hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-950 hover:underline pt-0.5"
               >
-                <span>Visualizza copia cartacea su Amazon</span>
+                <span>Visualizza su Amazon</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
           )}
         </div>
 
-        {/* Right Column: Title, Metadata, Purchase Module */}
-        <div className="lg:col-span-7 space-y-6">
+        {/* Right Column: Title, Metadata, Pricing, Actions */}
+        <div className="md:col-span-7 flex flex-col justify-between space-y-5">
           
+          {/* Header Texts */}
           <div className="space-y-2">
-            <span className="text-xs font-bold text-[#2b5374] uppercase tracking-wider block">
-              {product.categoryLabel}
+            <span className="text-[10px] sm:text-xs font-semibold text-brand-teal uppercase tracking-wider block">
+              {product.categoryLabel || 'E-book & Guida Nutrizionale'}
             </span>
 
-            <h1 className="font-editorial text-2xl sm:text-3xl md:text-4xl font-semibold text-[#0f2338] leading-tight">
+            <h1 className="font-serif text-xl sm:text-2xl md:text-3xl font-medium text-brand-slate leading-snug break-words">
               {product.title}
             </h1>
 
-            <p className="font-editorial text-base sm:text-lg text-[#4a5e73] italic">
-              «{product.subtitle}»
-            </p>
+            {product.subtitle && (
+              <p className="font-serif text-xs sm:text-sm text-slate-500 italic leading-relaxed break-words">
+                «{product.subtitle}»
+              </p>
+            )}
           </div>
 
-          {/* Metadata pill-less row */}
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[#64748b] pb-2 border-b border-[#f1f5f9]">
-            <span>{product.format}</span>
+          {/* Metadata Row */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 py-2.5 border-y border-slate-100">
+            <span>{product.format || 'Formato PDF'}</span>
             <span>·</span>
-            <span>{product.level}</span>
+            <span>{product.level || 'Benessere Quotidiano'}</span>
             <span>·</span>
-            <span>{product.lastUpdated}</span>
+            <span>{product.lastUpdated || 'Edizione Ufficiale'}</span>
           </div>
 
-          {/* Purchase Box */}
-          <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-[#edf4f8] via-[#f4f8fb] to-white border border-[#cbdfe9] space-y-5 shadow-xs">
-            <div className="flex items-baseline justify-between">
+          {/* Framed Purchase Box */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-brand-surface border border-brand-teal/20 space-y-4">
+            <div className="flex items-baseline justify-between flex-wrap gap-2">
               <div>
-                <span className="text-[11px] font-semibold text-[#64748b] block">Prezzo Ufficiale</span>
+                <span className="text-[10px] uppercase font-semibold text-slate-400 block mb-0.5">
+                  Prezzo Ufficiale
+                </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-editorial text-3xl font-bold text-[#0f2338] tabular-nums">
+                  <span className="font-serif text-2xl sm:text-3xl font-bold text-brand-slate tabular-nums">
                     {product.formattedPrice}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-sm text-slate-400 line-through tabular-nums">
+                    <span className="text-xs sm:text-sm text-slate-400 line-through tabular-nums">
                       € {product.originalPrice.toFixed(2)}
                     </span>
                   )}
                 </div>
               </div>
-              <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">
-                Download PDF Immediato
+              <span className="text-[10px] font-semibold text-brand-tealDark bg-brand-tealLight/50 border border-brand-teal/30 px-2.5 py-1 rounded-md">
+                Download Immediato (PDF)
               </span>
             </div>
 
-            {/* Actions */}
+            {/* Action Buttons */}
             {isPurchased ? (
               <div className="space-y-2">
                 <button
+                  type="button"
                   onClick={() => onOpenPdfReader(product)}
-                  className="w-full py-3.5 px-6 bg-[#2b5374] hover:bg-[#1f3f5a] text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                  className="w-full py-3 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
                   <BookOpen className="w-4 h-4" />
                   <span>Apri e Leggi nella tua Libreria</span>
                 </button>
                 <p className="text-[11px] text-center text-emerald-700 font-medium flex items-center justify-center gap-1">
                   <Check className="w-3.5 h-3.5" />
-                  <span>Questo e-book è sbloccato nel tuo account</span>
+                  <span>Questo volume è già sbloccato nel tuo account</span>
                 </p>
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
+                    type="button"
                     onClick={() => onDirectBuy(product)}
-                    className="py-3.5 px-4 bg-[#2b5374] hover:bg-[#1f3f5a] text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                    className="py-3 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                   >
                     <CreditCard className="w-4 h-4" />
                     <span>Acquista Ora</span>
                   </button>
 
                   <button
-                    onClick={() => {
-                      onAddToCart(product);
-                      onToast(`Aggiunto al carrello: ${product.title}`);
-                    }}
-                    className="py-3.5 px-4 bg-white border border-[#cbdfe9] text-[#2b5374] hover:bg-[#f8fafc] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    type="button"
+                    onClick={() => onAddToCart(product)}
+                    className="py-3 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
                   >
-                    <ShoppingBag className="w-4 h-4" />
+                    <ShoppingBag className="w-4 h-4 text-brand-teal" />
                     <span>Aggiungi al Carrello</span>
                   </button>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-[11px] text-[#64748b]">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Pagamento sicuro · Consegna istantanea via email e profilo</span>
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1">
+                  <ShieldCheck className="w-4 h-4 text-brand-teal shrink-0" />
+                  <span>Pagamento sicuro · Consegna immediata via email</span>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Tab Navigation: Descrizione, Capitoli, Estratto */}
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center gap-2 border-b border-[#e2e8f0] pb-2">
-              <button
-                onClick={() => setActiveTab('content')}
-                className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
-                  activeTab === 'content'
-                    ? 'bg-[#2b5374] text-white shadow-xs'
-                    : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f1f5f9]'
-                }`}
-              >
-                Descrizione Completa
-              </button>
+        </div>
 
-              <button
-                onClick={() => setActiveTab('chapters')}
-                className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
-                  activeTab === 'chapters'
-                    ? 'bg-[#2b5374] text-white shadow-xs'
-                    : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f1f5f9]'
-                }`}
-              >
-                Indice dei Capitoli ({product.chapters.length})
-              </button>
+      </article>
 
-              <button
-                onClick={() => setActiveTab('excerpt')}
-                className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
-                  activeTab === 'excerpt'
-                    ? 'bg-[#2b5374] text-white shadow-xs'
-                    : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f1f5f9]'
-                }`}
-              >
-                Estratto del Libro
-              </button>
-            </div>
+      {/* 3. Framed Tabs: Descrizione, Indice Capitoli, Estratto */}
+      <section className="editorial-card bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 border border-brand-teal/20 shadow-xs space-y-5" data-purpose="detail-tabs">
+        
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-3 overflow-x-auto scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setActiveTab('content')}
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'content'
+                ? 'bg-brand-teal text-white shadow-xs'
+                : 'text-slate-600 hover:text-brand-slate hover:bg-slate-50'
+            }`}
+          >
+            Descrizione Completa
+          </button>
 
-            {/* Tab 1: Full Description */}
-            {activeTab === 'content' && (
-              <div className="space-y-4 text-xs sm:text-sm text-[#4a5e73] leading-relaxed">
-                {product.fullDescription.map((par, idx) => (
-                  <p key={idx}>{par}</p>
-                ))}
+          <button
+            type="button"
+            onClick={() => setActiveTab('chapters')}
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'chapters'
+                ? 'bg-brand-teal text-white shadow-xs'
+                : 'text-slate-600 hover:text-brand-slate hover:bg-slate-50'
+            }`}
+          >
+            Indice dei Capitoli ({product.chapters?.length || 0})
+          </button>
 
-                <div className="pt-2 space-y-2">
-                  <h4 className="font-editorial text-sm font-semibold text-[#0f2338]">
-                    Cosa imparerai da questa guida:
-                  </h4>
-                  <ul className="space-y-1.5">
-                    {product.keyBenefits.map((b, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab('excerpt')}
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'excerpt'
+                ? 'bg-brand-teal text-white shadow-xs'
+                : 'text-slate-600 hover:text-brand-slate hover:bg-slate-50'
+            }`}
+          >
+            Estratto del Libro
+          </button>
+        </div>
+
+        {/* Tab 1: Full Description */}
+        {activeTab === 'content' && (
+          <div className="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed break-words">
+            {product.fullDescription?.map((par, idx) => (
+              <p key={idx}>{par}</p>
+            ))}
+
+            {product.keyBenefits && product.keyBenefits.length > 0 && (
+              <div className="pt-3 space-y-2.5">
+                <h4 className="font-serif text-sm font-semibold text-brand-slate">
+                  Cosa imparerai da questa guida:
+                </h4>
+                <ul className="space-y-2">
+                  {product.keyBenefits.map((b, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <div className="w-4 h-4 rounded-full bg-brand-tealLight/50 text-brand-teal flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 stroke-[2.5]" />
+                      </div>
+                      <span className="text-xs sm:text-sm text-slate-700">{b}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
+          </div>
+        )}
 
-            {/* Tab 2: Chapters Syllabus */}
-            {activeTab === 'chapters' && (
-              <div className="space-y-3">
-                {product.chapters.map((ch, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-white border border-[#e2e8f0] space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h5 className="font-editorial text-sm font-semibold text-[#0f2338]">
-                        {ch.title}
-                      </h5>
-                      <span className="text-[11px] text-[#2b5374] font-medium tabular-nums">
+        {/* Tab 2: Chapters Syllabus */}
+        {activeTab === 'chapters' && (
+          <div className="space-y-3">
+            {product.chapters && product.chapters.length > 0 ? (
+              product.chapters.map((ch, idx) => (
+                <div key={idx} className="p-3.5 rounded-xl bg-brand-surface/70 border border-brand-teal/15 space-y-1">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <h5 className="font-serif text-sm font-semibold text-brand-slate">
+                      {ch.title}
+                    </h5>
+                    {ch.durationOrPages && (
+                      <span className="text-[11px] text-brand-teal font-medium tabular-nums">
                         {ch.durationOrPages}
                       </span>
-                    </div>
-                    <p className="text-xs text-[#64748b] leading-relaxed">
+                    )}
+                  </div>
+                  {ch.description && (
+                    <p className="text-xs text-slate-500 leading-relaxed break-words">
                       {ch.description}
                     </p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Tab 3: Excerpt */}
-            {activeTab === 'excerpt' && (
-              <div className="p-5 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] space-y-3 text-xs sm:text-sm italic text-[#334155] leading-relaxed">
-                {product.previewExcerpt && product.previewExcerpt.length > 0 ? (
-                  product.previewExcerpt.map((ex, idx) => (
-                    <blockquote key={idx} className="pl-4 border-l-2 border-[#2b5374]">
-                      {ex}
-                    </blockquote>
-                  ))
-                ) : (
-                  <p>Estratto di anteprima consultabile nel lettore online.</p>
-                )}
-              </div>
-            )}
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Related Products */}
-      <div className="pt-10 border-t border-[#e2e8f0] space-y-6">
-        <h3 className="font-editorial text-2xl font-semibold text-[#0f2338]">
-          Altri E-book Consigliati
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {relatedProducts.map((rel) => (
-            <div
-              key={rel.id}
-              onClick={() => onSelectProduct(rel.id)}
-              className="bg-white p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#cbdfe9] hover:shadow-md transition-all cursor-pointer flex gap-4 items-center group"
-            >
-              <img
-                src={rel.coverImage}
-                alt={rel.title}
-                referrerPolicy="no-referrer"
-                className="w-16 h-20 object-contain rounded-lg shrink-0 bg-[#f8fafc]"
-              />
-              <div className="min-w-0">
-                <span className="text-[10px] font-bold text-[#2b5374] uppercase block">
-                  {rel.categoryLabel}
-                </span>
-                <h4 className="text-xs font-semibold text-[#0f2338] group-hover:text-[#2b5374] transition-colors truncate mt-0.5">
-                  {rel.title}
-                </h4>
-                <div className="text-xs font-semibold text-[#0f2338] mt-1 tabular-nums">
-                  {rel.formattedPrice}
+                  )}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+              ))
+            ) : (
+              <p className="text-xs text-slate-400">Indice disponibile all'interno del volume.</p>
+            )}
+          </div>
+        )}
+
+        {/* Tab 3: Excerpt */}
+        {activeTab === 'excerpt' && (
+          <div className="p-4 sm:p-5 rounded-xl bg-brand-surface/70 border border-brand-teal/15 space-y-3 text-xs sm:text-sm italic text-slate-700 leading-relaxed break-words">
+            {product.previewExcerpt && product.previewExcerpt.length > 0 ? (
+              product.previewExcerpt.map((ex, idx) => (
+                <blockquote key={idx} className="pl-3.5 border-l-2 border-brand-teal">
+                  {ex}
+                </blockquote>
+              ))
+            ) : (
+              <p>Estratto di anteprima consultabile nel lettore online.</p>
+            )}
+          </div>
+        )}
+
+      </section>
+
+      {/* 4. Framed Related E-books */}
+      {relatedProducts.length > 0 && (
+        <section className="space-y-4 pt-2" data-purpose="related-books">
+          <h3 className="font-serif text-base sm:text-lg font-semibold text-brand-slate pl-2 border-l-2 border-brand-teal">
+            Altri libri consigliati
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+            {relatedProducts.map((rel) => (
+              <article
+                key={rel.id}
+                onClick={() => onSelectProduct(rel.id)}
+                className="bg-white p-3.5 rounded-2xl border border-brand-teal/20 hover:border-brand-teal/40 hover:shadow-xs transition-all cursor-pointer flex gap-3.5 items-center group editorial-card"
+              >
+                <div className="w-14 h-18 rounded-lg overflow-hidden bg-brand-surface shrink-0 border border-slate-100 flex items-center justify-center">
+                  <img
+                    src={rel.coverImage}
+                    alt={rel.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[9px] font-semibold text-brand-teal uppercase tracking-wide block truncate">
+                    {rel.categoryLabel || 'E-book'}
+                  </span>
+                  <h4 className="font-serif text-xs font-medium text-brand-slate group-hover:text-brand-teal transition-colors truncate mt-0.5">
+                    {rel.title}
+                  </h4>
+                  <div className="text-xs font-serif font-bold text-brand-slate mt-1 tabular-nums">
+                    {rel.formattedPrice}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
     </div>
   );
