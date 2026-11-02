@@ -1,209 +1,311 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Product } from '../types';
-import { BookOpen, Search, Download, ExternalLink, ShieldCheck, Tag, ArrowRight } from 'lucide-react';
 
 interface EbooksPageProps {
   ebooks: Product[];
   onSelectProduct: (product: Product) => void;
   onQuickBuy: (product: Product) => void;
+  cartCount?: number;
+  onOpenCart?: () => void;
 }
 
 export const EbooksPage: React.FC<EbooksPageProps> = ({
   ebooks,
   onSelectProduct,
   onQuickBuy,
+  cartCount = 1,
+  onOpenCart,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'spesa' | 'donna' | 'colazione'>('all');
+  // Ordered strictly as in design reference
+  const book1 = ebooks.find((b) => b.id.includes('salvatempo')) || ebooks[0];
+  const book2 = ebooks.find((b) => b.id.includes('asporto')) || ebooks[3] || ebooks[1];
+  const book3 = ebooks.find((b) => b.id.includes('ciclo')) || ebooks[1];
+  const book4 = ebooks.find((b) => b.id.includes('colazione')) || ebooks[2];
 
-  const filteredEbooks = ebooks.filter((b) => {
-    const matchesSearch = b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.shortDescription.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    if (selectedFilter === 'all') return matchesSearch;
-    if (selectedFilter === 'spesa') return matchesSearch && (b.id.includes('salvatempo') || b.id.includes('asporto'));
-    if (selectedFilter === 'donna') return matchesSearch && b.id.includes('ciclo');
-    if (selectedFilter === 'colazione') return matchesSearch && b.id.includes('colazione');
-    return matchesSearch;
-  });
+  const gridImageSrc = '/assets/ebooks-grid.png';
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="w-full max-w-md md:max-w-5xl lg:max-w-6xl mx-auto bg-brand-surface text-brand-slate font-sans antialiased flex flex-col justify-between relative pb-28 md:pb-12 min-h-screen md:px-6 lg:px-8">
       
-      {/* Page Header */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#2b5374]">
-          <BookOpen className="w-4 h-4" />
-          <span>Catalogo Ufficiale E-book</span>
-        </div>
-        <h1 className="font-editorial text-3xl sm:text-4xl font-semibold text-[#0f2338]">
-          E-book & Guide Nutrizionali da Scaricare
-        </h1>
-        <p className="text-xs sm:text-sm text-[#4a5e73] max-w-2xl leading-relaxed">
-          I manuali originali della Dott.ssa Andreina Olivieri in formato digitale PDF ad alta risoluzione. Schemi chiari, basi biochimiche accessibili e ricettari operativi pronti all'uso.
-        </p>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-[#e2e8f0] shadow-2xs">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Cerca per titolo, ricetta o argomento..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#2b5374] bg-[#fcfdfd]"
-          />
-        </div>
-
-        {/* Filter Segmented Control */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          <button
-            onClick={() => setSelectedFilter('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              selectedFilter === 'all'
-                ? 'bg-[#2b5374] text-white shadow-2xs'
-                : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f8fafc]'
-            }`}
-          >
-            Tutti ({ebooks.length})
-          </button>
-          <button
-            onClick={() => setSelectedFilter('spesa')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              selectedFilter === 'spesa'
-                ? 'bg-[#2b5374] text-white shadow-2xs'
-                : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f8fafc]'
-            }`}
-          >
-            Organizzazione & Spesa
-          </button>
-          <button
-            onClick={() => setSelectedFilter('donna')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              selectedFilter === 'donna'
-                ? 'bg-[#2b5374] text-white shadow-2xs'
-                : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f8fafc]'
-            }`}
-          >
-            Salute Femminile
-          </button>
-          <button
-            onClick={() => setSelectedFilter('colazione')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              selectedFilter === 'colazione'
-                ? 'bg-[#2b5374] text-white shadow-2xs'
-                : 'text-[#4a5e73] hover:text-[#0f2338] hover:bg-[#f8fafc]'
-            }`}
-          >
-            Colazione & Ricette
-          </button>
-        </div>
-      </div>
-
-      {/* Grid of Ebooks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {filteredEbooks.map((ebook) => (
-          <div
-            key={ebook.id}
-            className="bg-white rounded-3xl border border-[#e2e8f0] p-6 flex flex-col sm:flex-row gap-6 items-center sm:items-start justify-between shadow-xs hover:shadow-xl hover:border-[#cbdfe9] transition-all group"
-          >
-            {/* Book Cover */}
-            <div 
-              onClick={() => onSelectProduct(ebook)}
-              className="relative w-44 aspect-[4/5] bg-[#f8fafc] rounded-2xl overflow-hidden p-3 flex items-center justify-center shrink-0 border border-[#f1f5f9] cursor-pointer group-hover:bg-slate-50 transition-colors"
-            >
-              <img
-                src={ebook.coverImage}
-                alt={ebook.title}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-contain drop-shadow-md group-hover:scale-104 transition-transform duration-300"
-              />
-              {ebook.badge && (
-                <span className="absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded bg-[#2b5374] text-white shadow-2xs">
-                  {ebook.badge}
-                </span>
-              )}
+      {/* 1. Mobile TopHeader: Exact replica of the smartphone design */}
+      <header className="w-full px-6 pt-7 pb-4 bg-brand-surface border-b border-brand-teal/15 sticky top-0 z-30 backdrop-blur-md bg-opacity-95 md:hidden" data-purpose="top-navigation-mobile">
+        <div className="flex items-center justify-between">
+          {/* Monogram Logo based on sketch: A.O. inside circle + label */}
+          <div className="flex items-center space-x-2.5">
+            <div className="w-9 h-9 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs">
+              <span className="font-serif font-bold text-brand-slate text-base tracking-tight">A</span>
             </div>
-
-            {/* Book Info */}
-            <div className="flex-1 min-w-0 space-y-3 flex flex-col justify-between h-full">
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2b5374] block">
-                  {ebook.categoryLabel}
-                </span>
-                
-                <h3 
-                  onClick={() => onSelectProduct(ebook)}
-                  className="font-editorial text-lg font-semibold text-[#0f2338] group-hover:text-[#2b5374] transition-colors leading-snug cursor-pointer"
-                >
-                  {ebook.title}
-                </h3>
-
-                <p className="text-xs text-[#526374] leading-relaxed line-clamp-3">
-                  {ebook.shortDescription}
-                </p>
-
-                <div className="text-[11px] text-[#64748b] pt-1">
-                  <span>{ebook.format}</span>
-                </div>
-              </div>
-
-              {/* Price and Action Buttons */}
-              <div className="pt-4 border-t border-[#f1f5f9] flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-semibold text-lg text-[#0f2338] tabular-nums">
-                      {ebook.formattedPrice}
-                    </span>
-                    {ebook.originalPrice && (
-                      <span className="text-xs text-slate-400 line-through tabular-nums">
-                        € {ebook.originalPrice.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[10px] text-emerald-700 font-medium block">
-                    Download immediato PDF
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => onSelectProduct(ebook)}
-                    className="px-3.5 py-2 text-xs font-semibold text-[#2b5374] bg-[#edf4f8] hover:bg-[#e1edf5] rounded-xl transition-colors cursor-pointer"
-                  >
-                    Dettagli
-                  </button>
-                  <button
-                    onClick={() => onQuickBuy(ebook)}
-                    className="px-4 py-2 text-xs font-semibold text-white bg-[#2b5374] hover:bg-[#1f3f5a] rounded-xl transition-all cursor-pointer shadow-xs"
-                  >
-                    Acquista Ora
-                  </button>
-                </div>
-              </div>
-
-              {/* Optional Amazon physical edition link */}
-              {ebook.amazonUrl && (
-                <div className="pt-1">
-                  <a
-                    href={ebook.amazonUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-800 hover:text-amber-950 transition-colors"
-                  >
-                    <span>Disponibile anche in copia cartacea su Amazon</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              )}
-
+            <div className="flex flex-col">
+              <span className="font-serif text-lg font-semibold tracking-wide text-brand-slate leading-none">A.O.</span>
+              <span className="text-[9px] uppercase tracking-widest text-brand-teal font-medium mt-0.5">Dott.ssa Andreina Olivieri</span>
             </div>
           </div>
-        ))}
+
+          {/* Cart Icon with badge as drawn on top right */}
+          <button 
+            type="button"
+            onClick={onOpenCart}
+            aria-label="Carrello" 
+            className="relative p-2 rounded-full hover:bg-white transition-colors duration-200 text-brand-slate cursor-pointer"
+          >
+            <svg className="w-6 h-6 stroke-[1.75]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13m-10.5 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+            {/* Badge counter */}
+            <span className="absolute top-1 right-1 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
+              {cartCount > 0 ? cartCount : 1}
+            </span>
+          </button>
+        </div>
+      </header>
+
+      {/* 2. Desktop & Tablet Top Header Bar: Elegant, spacious banner matching visual branding */}
+      <div className="hidden md:flex items-center justify-between pt-8 pb-6 mb-2 border-b border-brand-teal/20" data-purpose="top-navigation-desktop">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs">
+            <span className="font-serif font-bold text-brand-slate text-xl tracking-tight">A</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-serif text-2xl font-semibold tracking-wide text-brand-slate leading-none">A.O.</span>
+            <span className="text-[11px] uppercase tracking-widest text-brand-teal font-medium mt-1">Dott.ssa Andreina Olivieri • Boutique Digitale</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-medium text-slate-500 bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs">
+            4 Pubblicazioni Ufficiali
+          </span>
+          <button 
+            type="button"
+            onClick={onOpenCart}
+            aria-label="Carrello" 
+            className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-brand-teal/30 text-brand-slate transition-colors shadow-2xs cursor-pointer"
+          >
+            <div className="relative">
+              <svg className="w-5 h-5 stroke-[1.75]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13m-10.5 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" strokeLinecap="round" strokeLinejoin="round"></path>
+              </svg>
+              <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-brand-teal text-white text-[10px] font-semibold flex items-center justify-center rounded-full leading-none">
+                {cartCount > 0 ? cartCount : 1}
+              </span>
+            </div>
+            <span className="text-xs font-semibold">Carrello</span>
+          </button>
+        </div>
       </div>
+
+      {/* 3. Main Content: Single column on phone, responsive 2-column grid on tablet and desktop */}
+      <main className="flex-1 px-5 md:px-0 pt-5 pb-6 flex flex-col" data-purpose="product-list">
+        
+        {/* Section Title directly from sketch: TUTTI I LIBRI, E-BOOK E GUIDE */}
+        <section className="px-1 mb-5" data-purpose="section-header">
+          <div className="flex items-center justify-between">
+            <h1 className="font-serif uppercase tracking-wider text-sm md:text-lg font-semibold text-brand-slate/90 border-l-2 border-brand-teal pl-3 py-0.5">
+              Tutti i libri, e-book e guide
+            </h1>
+            <span className="hidden md:inline-block text-xs text-slate-500 font-medium">
+              Formato cartaceo con spedizione o digitale istantaneo (PDF)
+            </span>
+          </div>
+        </section>
+
+        {/* Responsive Grid: 1 column on phone (as in sketch), 2 columns on tablet & desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+
+          {/* Product Card 1: I menu salvatempo della tua nutrizionista */}
+          <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] relative overflow-hidden flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
+            {/* Book Cover container focusing top-left quadrant */}
+            <div 
+              onClick={() => book1 && onSelectProduct(book1)}
+              className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
+            >
+              <img 
+                alt="Copertina I menu salvatempo della tua nutrizionista" 
+                className="w-full h-full object-cover" 
+                style={{ objectPosition: '18% 12%', transform: 'scale(1.35)', transformOrigin: '18% 12%' }} 
+                src={gridImageSrc}
+              />
+              <span className="absolute top-1.5 left-1.5 bg-brand-teal text-white text-[9px] md:text-[10px] font-semibold px-1.5 md:px-2 py-0.5 rounded leading-none shadow-xs uppercase tracking-wide">
+                Offerta
+              </span>
+            </div>
+            {/* Product Details */}
+            <div className="flex-1 flex flex-col justify-between h-36 md:h-48 py-1">
+              <div>
+                <span className="text-[10px] md:text-xs uppercase font-semibold text-brand-teal tracking-wider">
+                  Libro Cartaceo
+                </span>
+                <h2 
+                  onClick={() => book1 && onSelectProduct(book1)}
+                  className="font-serif text-base md:text-xl font-medium text-brand-slate leading-snug mt-1 line-clamp-2 cursor-pointer hover:text-brand-teal transition-colors"
+                >
+                  I menu salvatempo della tua nutrizionista
+                </h2>
+              </div>
+              <div className="flex items-end justify-between mt-auto pt-2 border-t border-slate-100">
+                <div>
+                  <span className="text-xs md:text-sm line-through text-slate-400 block font-normal leading-none mb-1">
+                    18,00 €
+                  </span>
+                  <span className="text-lg md:text-2xl font-serif font-bold text-brand-slate">
+                    17,10 €
+                  </span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => book1 && onQuickBuy(book1)}
+                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                >
+                  Acquista
+                </button>
+              </div>
+            </div>
+          </article>
+
+          {/* Product Card 2: Componi i tuoi pasti da asporto (formato digitale) */}
+          <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
+            {/* Book Cover container focusing top-right quadrant */}
+            <div 
+              onClick={() => book2 && onSelectProduct(book2)}
+              className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
+            >
+              <img 
+                alt="Copertina Componi i tuoi pasti da asporto" 
+                className="w-full h-full object-cover" 
+                style={{ objectPosition: '78% 15%', transform: 'scale(1.35)', transformOrigin: '78% 15%' }} 
+                src={gridImageSrc}
+              />
+            </div>
+            {/* Product Details */}
+            <div className="flex-1 flex flex-col justify-between h-36 md:h-48 py-1">
+              <div>
+                <span className="text-[10px] md:text-xs uppercase font-semibold text-brand-teal tracking-wider">
+                  Formato Digitale
+                </span>
+                <h2 
+                  onClick={() => book2 && onSelectProduct(book2)}
+                  className="font-serif text-base md:text-xl font-medium text-brand-slate leading-snug mt-1 line-clamp-2 cursor-pointer hover:text-brand-teal transition-colors"
+                >
+                  Componi i tuoi pasti da asporto
+                </h2>
+              </div>
+              <div className="flex items-end justify-between mt-auto pt-2 border-t border-slate-100">
+                <div>
+                  <span className="text-xs md:text-sm text-slate-400 block font-normal leading-none mb-1">
+                    Prezzo
+                  </span>
+                  <span className="text-lg md:text-2xl font-serif font-bold text-brand-slate">
+                    12,90 €
+                  </span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => book2 && onQuickBuy(book2)}
+                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                >
+                  Acquista
+                </button>
+              </div>
+            </div>
+          </article>
+
+          {/* Product Card 3: Alimentazione e ciclo mestruale (formato digitale) */}
+          <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
+            {/* Book Cover container focusing bottom-left quadrant */}
+            <div 
+              onClick={() => book3 && onSelectProduct(book3)}
+              className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
+            >
+              <img 
+                alt="Copertina Alimentazione e ciclo mestruale" 
+                className="w-full h-full object-cover" 
+                style={{ objectPosition: '20% 85%', transform: 'scale(1.4)', transformOrigin: '20% 85%' }} 
+                src={gridImageSrc}
+              />
+            </div>
+            {/* Product Details */}
+            <div className="flex-1 flex flex-col justify-between h-36 md:h-48 py-1">
+              <div>
+                <span className="text-[10px] md:text-xs uppercase font-semibold text-brand-teal tracking-wider">
+                  Formato Digitale
+                </span>
+                <h2 
+                  onClick={() => book3 && onSelectProduct(book3)}
+                  className="font-serif text-base md:text-xl font-medium text-brand-slate leading-snug mt-1 line-clamp-2 cursor-pointer hover:text-brand-teal transition-colors"
+                >
+                  Alimentazione e ciclo mestruale
+                </h2>
+              </div>
+              <div className="flex items-end justify-between mt-auto pt-2 border-t border-slate-100">
+                <div>
+                  <span className="text-xs md:text-sm text-slate-400 block font-normal leading-none mb-1">
+                    Prezzo
+                  </span>
+                  <span className="text-lg md:text-2xl font-serif font-bold text-brand-slate">
+                    12,90 €
+                  </span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => book3 && onQuickBuy(book3)}
+                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                >
+                  Acquista
+                </button>
+              </div>
+            </div>
+          </article>
+
+          {/* Product Card 4: Migliora la tua colazione (formato digitale) */}
+          <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
+            {/* Book Cover container focusing bottom-right quadrant */}
+            <div 
+              onClick={() => book4 && onSelectProduct(book4)}
+              className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
+            >
+              <img 
+                alt="Copertina Migliora la tua colazione" 
+                className="w-full h-full object-cover" 
+                style={{ objectPosition: '80% 85%', transform: 'scale(1.35)', transformOrigin: '80% 85%' }} 
+                src={gridImageSrc}
+              />
+            </div>
+            {/* Product Details */}
+            <div className="flex-1 flex flex-col justify-between h-36 md:h-48 py-1">
+              <div>
+                <span className="text-[10px] md:text-xs uppercase font-semibold text-brand-teal tracking-wider">
+                  Formato Digitale
+                </span>
+                <h2 
+                  onClick={() => book4 && onSelectProduct(book4)}
+                  className="font-serif text-base md:text-xl font-medium text-brand-slate leading-snug mt-1 line-clamp-2 cursor-pointer hover:text-brand-teal transition-colors"
+                >
+                  Migliora la tua colazione
+                </h2>
+              </div>
+              <div className="flex items-end justify-between mt-auto pt-2 border-t border-slate-100">
+                <div>
+                  <span className="text-xs md:text-sm text-slate-400 block font-normal leading-none mb-1">
+                    Prezzo
+                  </span>
+                  <span className="text-lg md:text-2xl font-serif font-bold text-brand-slate">
+                    12,90 €
+                  </span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => book4 && onQuickBuy(book4)}
+                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                >
+                  Acquista
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+      </main>
 
     </div>
   );

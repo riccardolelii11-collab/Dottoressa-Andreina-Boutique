@@ -2,7 +2,13 @@
 
 @theme {
   --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --color-brand-teal: #7697a0;
+  --color-brand-teal-light: #cde0e5;
+  --color-brand-teal-dark: #56767e;
+  --color-brand-slate: #1e293b;
+  --color-brand-surface: #f5fafe;
+  --color-brand-card: #ffffff;
 }
 
 :root {
@@ -11,10 +17,20 @@
 
 body {
   font-family: var(--font-sans);
+  background-color: #f5fafe;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .font-editorial {
   font-family: var(--font-serif);
+}
+
+.editorial-card {
+  box-shadow: 0 4px 20px -2px rgba(118, 151, 160, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.bottom-capsule {
+  box-shadow: 0 8px 30px rgba(86, 118, 126, 0.16);
 }
 
 /* ==========================================================================

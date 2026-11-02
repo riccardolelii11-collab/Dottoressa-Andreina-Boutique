@@ -1,11 +1,13 @@
 export type NavigationTab = 
-  | 'home' 
   | 'ebooks' 
+  | 'services' 
+  | 'consultations' 
+  | 'profile' 
+  | 'product-detail'
+  | 'home' 
   | 'recipes' 
   | 'premium' 
   | 'courses' 
-  | 'profile' 
-  | 'product-detail'
   | 'admin-preview';
 
 export interface ProductChapter {

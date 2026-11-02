@@ -15,7 +15,6 @@ import {
 } from './data/products';
 
 import { DesktopSidebar } from './components/DesktopSidebar';
-import { MobileTopBar } from './components/MobileTopBar';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { CartDrawer } from './components/CartDrawer';
 import { PreCheckoutModal } from './components/PreCheckoutModal';
@@ -24,17 +23,12 @@ import { PdfReaderModal } from './components/PdfReaderModal';
 import { AuthModal } from './components/AuthModal';
 import { NotificationToast } from './components/NotificationToast';
 
-import { HomePage } from './pages/HomePage';
 import { EbooksPage } from './pages/EbooksPage';
-import { VideoRecipesPage } from './pages/VideoRecipesPage';
-import { PremiumPage } from './pages/PremiumPage';
-import { CoursesPage } from './pages/CoursesPage';
-import { ProfilePage } from './pages/ProfilePage';
+import { PlaceholderSectionPage } from './pages/PlaceholderSectionPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { AdminPreviewPage } from './pages/AdminPreviewPage';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<NavigationTab>('home');
+  const [currentTab, setCurrentTab] = useState<NavigationTab>('ebooks');
   const [ebooks, setEbooks] = useState<Product[]>(REAL_EBOOKS);
   const [recipes] = useState<VideoRecipe[]>(FREE_VIDEO_RECIPES);
   const [courses] = useState<VideoCourse[]>(VIDEO_COURSES);
@@ -254,11 +248,10 @@ export default function App() {
     setPdfProduct(ebook);
     setIsPdfReaderOpen(true);
   };
-
   return (
-    <div className="min-h-screen bg-[#fcfdfd] text-[#0f2338] flex flex-col md:flex-row antialiased selection:bg-[#cbe1ef] selection:text-[#0b1a2b]">
+    <div className="min-h-screen bg-brand-surface text-brand-slate flex flex-col md:flex-row antialiased selection:bg-brand-tealLight selection:text-brand-slate">
       
-      {/* 1. Desktop Sidebar (Hidden on mobile) */}
+      {/* 1. Desktop Sidebar (Strictly 4 tabs: E-Book, Servizi, Consulenze, Profilo) */}
       <DesktopSidebar
         currentTab={currentTab}
         onNavigate={handleNavigate}
@@ -269,84 +262,49 @@ export default function App() {
       />
 
       {/* 2. Main Content Container */}
-      <div className="flex-1 min-w-0 flex flex-col min-h-screen pb-20 md:pb-8">
-        
-        {/* Mobile Top Bar (Hidden on desktop) */}
-        <MobileTopBar
-          onNavigate={handleNavigate}
-          user={user}
-          cartCount={cartItems.length}
-          onOpenCart={() => setIsCartOpen(true)}
-          onOpenAuth={() => setIsAuthOpen(true)}
-        />
-
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen pb-24 md:pb-8">
         {/* Viewport Content Area */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8">
+        <main className="flex-1 w-full mx-auto">
           
-          {currentTab === 'home' && (
-            <HomePage
-              ebooks={ebooks}
-              recipes={recipes}
-              courses={courses}
-              onNavigate={handleNavigate}
-              onSelectProduct={handleSelectProduct}
-              onSelectRecipe={handleSelectRecipe}
-              onQuickBuy={handleQuickBuy}
-              onToast={showToast}
-            />
-          )}
-
-          {currentTab === 'ebooks' && (
+          {/* Tab 1: E-Book (The active populated catalog with 4 official volumes) */}
+          {(currentTab === 'ebooks' || currentTab === 'home') && (
             <EbooksPage
               ebooks={ebooks}
               onSelectProduct={handleSelectProduct}
               onQuickBuy={handleQuickBuy}
+              cartCount={cartItems.length}
+              onOpenCart={() => setIsCartOpen(true)}
             />
           )}
 
-          {currentTab === 'recipes' && (
-            <VideoRecipesPage
-              recipes={recipes}
-              onSelectRecipe={handleSelectRecipe}
-              savedRecipeIds={user.savedRecipeIds}
-              onToggleSaveRecipe={handleToggleSaveRecipe}
-              onToast={showToast}
+          {/* Tab 2: Servizi (Empty placeholder awaiting user instructions/graphics) */}
+          {currentTab === 'services' && (
+            <PlaceholderSectionPage
+              title="Servizi"
+              cartCount={cartItems.length}
+              onOpenCart={() => setIsCartOpen(true)}
             />
           )}
 
-          {currentTab === 'premium' && (
-            <PremiumPage
-              user={user}
-              onOpenCheckoutSubscription={handleSubscriptionCheckout}
-              onToggleSubscriptionDemo={handleToggleSubscription}
-              onToast={showToast}
+          {/* Tab 3: Consulenze (Empty placeholder awaiting user instructions/graphics) */}
+          {currentTab === 'consultations' && (
+            <PlaceholderSectionPage
+              title="Consulenze"
+              cartCount={cartItems.length}
+              onOpenCart={() => setIsCartOpen(true)}
             />
           )}
 
-          {currentTab === 'courses' && (
-            <CoursesPage
-              courses={courses}
-              hasPremiumAccess={user.hasActiveSubscription}
-              onOpenCheckoutCourse={handleCourseCheckout}
-              onToast={showToast}
-            />
-          )}
-
+          {/* Tab 4: Profilo (Clean minimal section awaiting user instructions/graphics) */}
           {currentTab === 'profile' && (
-            <ProfilePage
-              user={user}
-              allEbooks={ebooks}
-              allCourses={courses}
-              allRecipes={recipes}
-              onOpenPdfReader={handleOpenPdfReader}
-              onLogout={() => setUser((prev) => ({ ...prev, isLoggedIn: false }))}
-              onLogin={(email, name) => setUser((prev) => ({ ...prev, isLoggedIn: true, email, name }))}
-              onToggleSubscription={handleToggleSubscription}
-              onToast={showToast}
-              onNavigateToTab={handleNavigate}
+            <PlaceholderSectionPage
+              title="Profilo"
+              cartCount={cartItems.length}
+              onOpenCart={() => setIsCartOpen(true)}
             />
           )}
 
+          {/* Product Detail Modal/View */}
           {currentTab === 'product-detail' && selectedProduct && (
             <ProductDetailPage
               product={selectedProduct}
@@ -357,15 +315,6 @@ export default function App() {
               onOpenPdfReader={handleOpenPdfReader}
               onSelectProduct={handleSelectProductId}
               allProducts={ebooks}
-              onToast={showToast}
-            />
-          )}
-
-          {currentTab === 'admin-preview' && (
-            <AdminPreviewPage
-              products={ebooks}
-              onBackToBoutique={() => handleNavigate('home')}
-              onAddNewProduct={handleAddNewProduct}
               onToast={showToast}
             />
           )}
