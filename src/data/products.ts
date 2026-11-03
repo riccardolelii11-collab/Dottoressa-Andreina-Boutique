@@ -218,7 +218,7 @@ export const REAL_EBOOKS: Product[] = [
     isPremiumOnly: false,
     coverImage: '/assets/aistudio/Libro-componi-i-tuoi-pasti-dasporto_5c9898ec.png',
     originalUrl: 'https://www.dottoressaandreinaolivieri.it/prodotto/componi-i-tuoi-pasti-da-asporto/',
-    amazonUrl: 'https://www.amazon.it/s?k=Componi+i+tuoi+pasti+da+asporto+Andreina+Olivieri',
+    amazonUrl: 'https://www.amazon.it/Componi-tuoi-pasti-asporto-mangiare/dp/B0BZFG51D4',
     badge: 'Disponibile anche su Amazon',
     rating: 4.8,
     reviewsCount: 26,
