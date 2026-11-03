@@ -39,7 +39,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   cartCount = 0,
   onOpenCart,
 }) => {
-  const [activeTab, setActiveTab] = useState<'content' | 'chapters' | 'excerpt'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'chapters'>('content');
 
   const relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 3);
 
@@ -126,17 +126,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </span>
             )}
           </div>
-
-          {/* Quick Preview Button */}
-          <button
-            type="button"
-            onClick={() => onOpenPdfReader(product)}
-            className="w-full py-2.5 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-brand-surface rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
-          >
-            <BookOpen className="w-4 h-4 text-brand-teal" />
-            <span>Sfoglia Estratto di Anteprima</span>
-          </button>
-
         </div>
 
         {/* Right Column: Title, Metadata, Pricing, Actions */}
@@ -378,18 +367,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           >
             Indice dei Capitoli ({product.chapters?.length || 0})
           </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('excerpt')}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              activeTab === 'excerpt'
-                ? 'bg-brand-teal text-white shadow-xs'
-                : 'text-slate-600 hover:text-brand-slate hover:bg-slate-50'
-            }`}
-          >
-            Estratto del Libro
-          </button>
         </div>
 
         {/* Tab 1: Full Description */}
@@ -444,21 +421,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               ))
             ) : (
               <p className="text-xs text-slate-400">Indice disponibile all'interno del volume.</p>
-            )}
-          </div>
-        )}
-
-        {/* Tab 3: Excerpt */}
-        {activeTab === 'excerpt' && (
-          <div className="p-4 sm:p-5 rounded-xl bg-brand-surface/70 border border-brand-teal/15 space-y-3 text-xs sm:text-sm italic text-slate-700 leading-relaxed break-words">
-            {product.previewExcerpt && product.previewExcerpt.length > 0 ? (
-              product.previewExcerpt.map((ex, idx) => (
-                <blockquote key={idx} className="pl-3.5 border-l-2 border-brand-teal">
-                  {ex}
-                </blockquote>
-              ))
-            ) : (
-              <p>Estratto di anteprima consultabile nel lettore online.</p>
             )}
           </div>
         )}
