@@ -137,26 +137,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <span>Sfoglia Estratto di Anteprima</span>
           </button>
 
-          {/* Link to Amazon if physical version exists */}
-          {product.amazonUrl && (
-            <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/60 space-y-1.5">
-              <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
-                Disponibile anche in Versione Cartacea
-              </span>
-              <p className="text-[11px] text-amber-900/80 leading-relaxed">
-                Preferisci la versione cartacea? Puoi ordinarla direttamente su Amazon.
-              </p>
-              <a
-                href={product.amazonUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-950 hover:underline pt-0.5"
-              >
-                <span>Visualizza su Amazon</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          )}
         </div>
 
         {/* Right Column: Title, Metadata, Pricing, Actions */}
@@ -188,74 +168,183 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <span>{product.lastUpdated || 'Edizione Ufficiale'}</span>
           </div>
 
-          {/* Framed Purchase Box */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-brand-surface border border-brand-teal/20 space-y-4">
-            <div className="flex items-baseline justify-between flex-wrap gap-2">
-              <div>
-                <span className="text-[10px] uppercase font-semibold text-slate-400 block mb-0.5">
-                  Prezzo Ufficiale
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-serif text-2xl sm:text-3xl font-bold text-brand-slate tabular-nums">
-                    {product.formattedPrice}
-                  </span>
-                  {product.originalPrice && (
-                    <span className="text-xs sm:text-sm text-slate-400 line-through tabular-nums">
-                      € {product.originalPrice.toFixed(2)}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <span className="text-[10px] font-semibold text-brand-tealDark bg-brand-tealLight/50 border border-brand-teal/30 px-2.5 py-1 rounded-md">
-                Download Immediato (PDF)
+          {/* DUAL PURCHASE CHOICES: eBook vs Libro Cartaceo (Amazon) */}
+          {product.amazonUrl && !product.id.includes('salvatempo') ? (
+            <div className="space-y-4" data-purpose="format-options">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                Scegli il formato che preferisci:
               </span>
-            </div>
 
-            {/* Action Buttons */}
-            {isPurchased ? (
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={() => onOpenPdfReader(product)}
-                  className="w-full py-3 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+              {/* OPTION 1: Formato Digitale (eBook PDF) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-brand-surface border border-brand-teal/25 space-y-3.5 shadow-2xs">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-brand-teal shrink-0" />
+                      <span className="font-semibold text-sm text-brand-slate">
+                        Formato Digitale (eBook PDF)
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                      Download immediato sul tuo dispositivo (cellulare, tablet o PC).
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="font-serif text-xl sm:text-2xl font-bold text-brand-slate tabular-nums block">
+                      {product.formattedPrice}
+                    </span>
+                    <span className="text-[10px] text-brand-tealDark font-medium bg-brand-tealLight/60 px-2 py-0.5 rounded">
+                      Istantaneo
+                    </span>
+                  </div>
+                </div>
+
+                {/* Digital Actions */}
+                {isPurchased ? (
+                  <div className="space-y-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => onOpenPdfReader(product)}
+                      className="w-full py-2.5 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>Apri e Leggi nella tua Libreria</span>
+                    </button>
+                    <p className="text-[11px] text-center text-emerald-700 font-medium flex items-center justify-center gap-1">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Questo volume è già sbloccato nel tuo account</span>
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => onDirectBuy(product)}
+                      className="py-2.5 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      <span>Acquista eBook</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onAddToCart(product)}
+                      className="py-2.5 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5 text-brand-teal" />
+                      <span>Aggiungi al Carrello</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* OPTION 2: Formato Cartaceo (Libro Fisico su Amazon) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3.5 shadow-2xs">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span className="font-semibold text-sm text-amber-950">
+                        Formato Cartaceo (Libro Fisico)
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-amber-900/80 mt-1 leading-relaxed">
+                      Preferisci la copia stampata da sfogliare a casa o in cucina? Ordina il libro rilegato dal negozio ufficiale Amazon.
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <span className="text-[10px] font-bold text-amber-900 bg-amber-200/70 px-2 py-0.5 rounded uppercase tracking-wider block">
+                      Amazon
+                    </span>
+                  </div>
+                </div>
+
+                <a
+                  href={product.amazonUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 bg-[#232F3E] hover:bg-[#131921] active:bg-black text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2.5 shadow-xs transition-colors cursor-pointer group"
                 >
-                  <BookOpen className="w-4 h-4" />
-                  <span>Apri e Leggi nella tua Libreria</span>
-                </button>
-                <p className="text-[11px] text-center text-emerald-700 font-medium flex items-center justify-center gap-1">
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Questo volume è già sbloccato nel tuo account</span>
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => onDirectBuy(product)}
-                    className="py-3 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    <span>Acquista Ora</span>
-                  </button>
+                  <span>Acquista Libro Cartaceo su Amazon</span>
+                  <ExternalLink className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+                </a>
 
-                  <button
-                    type="button"
-                    onClick={() => onAddToCart(product)}
-                    className="py-3 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
-                  >
-                    <ShoppingBag className="w-4 h-4 text-brand-teal" />
-                    <span>Aggiungi al Carrello</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1">
-                  <ShieldCheck className="w-4 h-4 text-brand-teal shrink-0" />
-                  <span>Pagamento sicuro · Consegna immediata via email</span>
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-amber-900/70 pt-0.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                  <span>Spedizione rapida Prime e garanzia ufficiale Amazon</span>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            /* SINGLE PURCHASE MODULE: For I menu salvatempo della tua nutrizionista (Cartaceo Boutique) */
+            <div className="p-4 sm:p-5 rounded-2xl bg-brand-surface border border-brand-teal/20 space-y-4">
+              <div className="flex items-baseline justify-between flex-wrap gap-2">
+                <div>
+                  <span className="text-[10px] uppercase font-semibold text-slate-400 block mb-0.5">
+                    Libro Cartaceo Ufficiale
+                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-serif text-2xl sm:text-3xl font-bold text-brand-slate tabular-nums">
+                      {product.formattedPrice}
+                    </span>
+                    {product.originalPrice && (
+                      <span className="text-xs sm:text-sm text-slate-400 line-through tabular-nums">
+                        € {product.originalPrice.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span className="text-[10px] font-semibold text-brand-tealDark bg-brand-tealLight/50 border border-brand-teal/30 px-2.5 py-1 rounded-md">
+                  Offerta Promozionale
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              {isPurchased ? (
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => onOpenPdfReader(product)}
+                    className="w-full py-3 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    <span>Apri e Leggi nella tua Libreria</span>
+                  </button>
+                  <p className="text-[11px] text-center text-emerald-700 font-medium flex items-center justify-center gap-1">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Questo volume è già sbloccato nel tuo account</span>
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => onDirectBuy(product)}
+                      className="py-3 px-4 bg-brand-teal hover:bg-brand-tealDark text-white rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      <span>Acquista Ora</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onAddToCart(product)}
+                      className="py-3 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
+                    >
+                      <ShoppingBag className="w-4 h-4 text-brand-teal" />
+                      <span>Aggiungi al Carrello</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1">
+                    <ShieldCheck className="w-4 h-4 text-brand-teal shrink-0" />
+                    <span>Pagamento sicuro · Consegna garantita a domicilio</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
 
