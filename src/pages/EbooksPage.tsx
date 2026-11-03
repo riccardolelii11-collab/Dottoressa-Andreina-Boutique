@@ -22,8 +22,10 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
   const book3 = ebooks.find((b) => b.id.includes('ciclo')) || ebooks[1];
   const book4 = ebooks.find((b) => b.id.includes('colazione')) || ebooks[2];
 
-  const gridImageSrc = '/assets/ebooks-grid.png';
+  const book1ImageSrc = '/assets/aistudio/I-menu-salvatempo-della-tua-nutrizionista_11fb9f5e.png';
   const book2ImageSrc = '/assets/aistudio/Libro-componi-i-tuoi-pasti-dasporto_5c9898ec.png';
+  const book3ImageSrc = '/assets/aistudio/Alimentazione-ciclo-mestruale-centered.png';
+  const book4ImageSrc = '/assets/aistudio/3-2_4eecd11f.png';
 
   return (
     <div className="w-full max-w-md md:max-w-5xl lg:max-w-6xl mx-auto bg-brand-surface text-brand-slate font-sans antialiased flex flex-col justify-between relative pb-28 md:pb-12 min-h-screen md:px-6 lg:px-8">
@@ -119,16 +121,16 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
 
           {/* Product Card 1: I menu salvatempo della tua nutrizionista */}
           <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] relative overflow-hidden flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
-            {/* Book Cover container focusing top-left quadrant */}
+            {/* Book Cover container focusing 3D physical book */}
             <div 
               onClick={() => book1 && onSelectProduct(book1)}
               className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
             >
               <img 
                 alt="Copertina I menu salvatempo della tua nutrizionista" 
-                className="w-full h-full object-cover" 
-                style={{ objectPosition: '18% 12%', transform: 'scale(1.35)', transformOrigin: '18% 12%' }} 
-                src={gridImageSrc}
+                className="w-full h-full object-cover transition-transform duration-300" 
+                style={{ objectPosition: '50% 50%', transform: 'scale(1.15)', transformOrigin: '50% 50%' }} 
+                src={book1ImageSrc}
               />
               <span className="absolute top-1.5 left-1.5 bg-brand-teal text-white text-[9px] md:text-[10px] font-semibold px-1.5 md:px-2 py-0.5 rounded leading-none shadow-xs uppercase tracking-wide">
                 Offerta
@@ -216,16 +218,16 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
 
           {/* Product Card 3: Alimentazione e ciclo mestruale (formato digitale) */}
           <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
-            {/* Book Cover container focusing bottom-left quadrant */}
+            {/* Book Cover container focusing the tablet in the center */}
             <div 
               onClick={() => book3 && onSelectProduct(book3)}
               className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
             >
               <img 
                 alt="Copertina Alimentazione e ciclo mestruale" 
-                className="w-full h-full object-cover" 
-                style={{ objectPosition: '20% 85%', transform: 'scale(1.4)', transformOrigin: '20% 85%' }} 
-                src={gridImageSrc}
+                className="w-full h-full object-cover transition-transform duration-300" 
+                style={{ objectPosition: 'center center', transform: 'scale(1.04)', transformOrigin: 'center center' }} 
+                src={book3ImageSrc}
               />
             </div>
             {/* Product Details */}
@@ -263,16 +265,16 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
 
           {/* Product Card 4: Migliora la tua colazione (formato digitale) */}
           <article className="editorial-card bg-white rounded-2xl p-3.5 md:p-5 border border-brand-teal/20 transition-all hover:border-brand-teal/40 hover:shadow-md active:scale-[0.99] flex flex-row items-center gap-4 md:gap-5" data-purpose="product-card">
-            {/* Book Cover container focusing bottom-right quadrant */}
+            {/* Book Cover container focusing the tablet in the center */}
             <div 
               onClick={() => book4 && onSelectProduct(book4)}
               className="w-28 h-36 md:w-36 md:h-48 shrink-0 rounded-xl overflow-hidden bg-brand-surface relative border border-slate-100 shadow-inner cursor-pointer"
             >
               <img 
                 alt="Copertina Migliora la tua colazione" 
-                className="w-full h-full object-cover" 
-                style={{ objectPosition: '80% 85%', transform: 'scale(1.35)', transformOrigin: '80% 85%' }} 
-                src={gridImageSrc}
+                className="w-full h-full object-cover transition-transform duration-300" 
+                style={{ objectPosition: '38.5% 51%', transform: 'scale(1.28)', transformOrigin: '38.5% 51%' }} 
+                src={book4ImageSrc}
               />
             </div>
             {/* Product Details */}
