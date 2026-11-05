@@ -106,6 +106,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     };
   }, [onBack]);
 
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+
+  useEffect(() => {
+    setIsAddedToCart(false);
+  }, [product.id]);
+
+  const handleAddToCartWithFeedback = () => {
+    onAddToCart(product);
+    setIsAddedToCart(true);
+    setTimeout(() => {
+      setIsAddedToCart(false);
+    }, 1800);
+  };
+
   const relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 3);
 
   const handleShare = () => {
@@ -295,11 +309,25 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
                     <button
                       type="button"
-                      onClick={() => onAddToCart(product)}
-                      className="py-2.5 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
+                      onClick={handleAddToCartWithFeedback}
+                      className={`py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer shadow-2xs active:scale-95 ${
+                        isAddedToCart
+                          ? 'bg-emerald-600 border border-emerald-600 text-white shadow-xs scale-[1.02]'
+                          : 'bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50'
+                      }`}
+                      aria-label="Aggiungi al carrello"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5 text-brand-teal" />
-                      <span>Aggiungi al Carrello</span>
+                      {isAddedToCart ? (
+                        <>
+                          <Check className="w-4 h-4 text-white stroke-[2.5] animate-bounce" />
+                          <span className="font-bold">Aggiunto al Carrello!</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="w-4 h-4 text-brand-teal" />
+                          <span>Aggiungi al Carrello</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 )}
@@ -396,11 +424,25 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
                     <button
                       type="button"
-                      onClick={() => onAddToCart(product)}
-                      className="py-3 px-4 bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs"
+                      onClick={handleAddToCartWithFeedback}
+                      className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer shadow-2xs active:scale-95 ${
+                        isAddedToCart
+                          ? 'bg-emerald-600 border border-emerald-600 text-white shadow-xs scale-[1.02]'
+                          : 'bg-white border border-brand-teal/30 text-brand-slate hover:bg-slate-50'
+                      }`}
+                      aria-label="Aggiungi al carrello"
                     >
-                      <ShoppingBag className="w-4 h-4 text-brand-teal" />
-                      <span>Aggiungi al Carrello</span>
+                      {isAddedToCart ? (
+                        <>
+                          <Check className="w-4 h-4 text-white stroke-[2.5] animate-bounce" />
+                          <span className="font-bold">Aggiunto al Carrello!</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="w-4 h-4 text-brand-teal" />
+                          <span>Aggiungi al Carrello</span>
+                        </>
+                      )}
                     </button>
                   </div>
 
