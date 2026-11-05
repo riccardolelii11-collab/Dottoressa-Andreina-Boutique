@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ShoppingBag, Check } from 'lucide-react';
+import { ShoppingBag, Check, ExternalLink } from 'lucide-react';
 
 interface EbooksPageProps {
   ebooks: Product[];
@@ -171,28 +171,17 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
                     17,10 €
                   </span>
                 </div>
-                <button 
-                  type="button"
-                  onClick={(e) => book1 && handleAddToCartClick(book1, e)}
-                  className={`px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
-                    recentlyAddedId === book1?.id
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark'
-                  }`}
-                  aria-label={`Aggiungi ${book1?.title} al carrello`}
+                <a 
+                  href={book1?.amazonUrl || 'https://www.amazon.it/salvatempo-nutrizionista-Consigli-comporre-equilibrati/dp/8857310604'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-[#232F3E] hover:bg-[#131921] active:bg-black text-white px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap group"
+                  aria-label={`Acquista ${book1?.title} su Amazon`}
                 >
-                  {recentlyAddedId === book1?.id ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>Aggiunto!</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-                      <span>+ Carrello</span>
-                    </>
-                  )}
-                </button>
+                  <span>Su Amazon</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+                </a>
               </div>
             </div>
           </article>
