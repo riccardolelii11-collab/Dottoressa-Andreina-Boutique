@@ -623,27 +623,14 @@ export const VIDEO_COURSES: VideoCourse[] = [
  * PROFILO UTENTE DEMO PRECONFIGURATO
  */
 export const DEFAULT_USER_PROFILE: UserProfile = {
-  name: 'Chiara Rossi',
-  email: 'chiara.rossi@esempio.it',
+  name: 'Utente',
+  email: 'utente@esempio.it',
   isLoggedIn: true,
-  registeredDate: 'Gennaio 2026',
-  hasActiveSubscription: true,
-  subscriptionPlan: 'monthly',
-  subscriptionRenewalDate: '28 Novembre 2026',
-  purchasedProductIds: ['ebook-menu-salvatempo', 'ebook-migliora-la-tua-colazione'],
-  savedRecipeIds: ['recipe-porridge-avena', 'recipe-quinoa-salmone-avocado'],
-  orders: [
-    {
-      id: 'ord-102',
-      orderNumber: 'AB-2026-881',
-      date: '14 Ottobre 2026',
-      items: [
-        { title: 'I menu salvatempo della tua nutrizionista', price: 17.10, format: 'Ebook PDF' },
-        { title: 'Migliora la tua colazione', price: 12.90, format: 'Ebook PDF' }
-      ],
-      total: 30.00,
-      status: 'Completato',
-      invoicePdfName: 'Ricevuta_Fiscale_AB-2026-881.pdf'
-    }
-  ]
+  registeredDate: 'Novembre 2026',
+  hasActiveSubscription: false,
+  subscriptionPlan: null,
+  subscriptionRenewalDate: undefined,
+  purchasedProductIds: [],
+  savedRecipeIds: [],
+  orders: []
 };

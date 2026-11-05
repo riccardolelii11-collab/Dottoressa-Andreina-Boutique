@@ -66,14 +66,24 @@ export default function App() {
     }
   }, [toastMessage]);
 
-  // Navigation router
-  const handleNavigate = (tab: NavigationTab) => {
+  // Navigation router with Browser History support (for Mouse buttons 5/6 & shortcuts)
+  const handleNavigate = (tab: NavigationTab, push: boolean = true) => {
+    if (push) {
+      window.history.pushState({ tab }, '', `#${tab}`);
+    }
     setCurrentTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Product Selection
-  const handleSelectProduct = (product: Product) => {
+  // Product Selection with History push
+  const handleSelectProduct = (product: Product, push: boolean = true) => {
+    if (push) {
+      window.history.pushState(
+        { tab: 'product-detail', productId: product.id },
+        '',
+        `#book-${product.slug}`
+      );
+    }
     setSelectedProduct(product);
     setCurrentTab('product-detail');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -85,6 +95,85 @@ export default function App() {
       handleSelectProduct(found);
     }
   };
+
+  // Dedicated back action from detail page
+  const handleBackFromDetail = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      handleNavigate('ebooks');
+    }
+  };
+
+  // History popstate and Mouse Back buttons (buttons 3/4/5/6) support
+  useEffect(() => {
+    // Initial sync with URL hash
+    const initialHash = window.location.hash;
+    if (initialHash.startsWith('#book-')) {
+      const slug = initialHash.replace('#book-', '');
+      const found = ebooks.find((p) => p.slug === slug);
+      if (found) {
+        setSelectedProduct(found);
+        setCurrentTab('product-detail');
+        window.history.replaceState({ tab: 'product-detail', productId: found.id }, '', initialHash);
+      }
+    } else if (['#ebooks', '#services', '#consultations', '#profile'].includes(initialHash)) {
+      const tab = initialHash.replace('#', '') as NavigationTab;
+      setCurrentTab(tab);
+      window.history.replaceState({ tab }, '', initialHash);
+    } else {
+      window.history.replaceState({ tab: 'ebooks' }, '', '#ebooks');
+    }
+
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (state && state.tab === 'product-detail' && state.productId) {
+        const prod = ebooks.find((p) => p.id === state.productId);
+        if (prod) {
+          setSelectedProduct(prod);
+          setCurrentTab('product-detail');
+          return;
+        }
+      }
+      if (state && state.tab) {
+        setCurrentTab(state.tab);
+        return;
+      }
+      // Hash fallback
+      const hash = window.location.hash;
+      if (hash.startsWith('#book-')) {
+        const slug = hash.replace('#book-', '');
+        const prod = ebooks.find((p) => p.slug === slug);
+        if (prod) {
+          setSelectedProduct(prod);
+          setCurrentTab('product-detail');
+          return;
+        }
+      }
+      setCurrentTab('ebooks');
+    };
+
+    // Mouse back and forward buttons handler (XBUTTON1=button 3, XBUTTON2=button 4)
+    const handleMouseUp = (e: MouseEvent) => {
+      if (e.button === 3) {
+        // Back button on 5-button mouse
+        e.preventDefault();
+        window.history.back();
+      } else if (e.button === 4) {
+        // Forward button on 5-button mouse
+        e.preventDefault();
+        window.history.forward();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [ebooks]);
 
   // Recipe Selection & Playback
   const handleSelectRecipe = (recipe: VideoRecipe) => {
@@ -272,6 +361,7 @@ export default function App() {
               ebooks={ebooks}
               onSelectProduct={handleSelectProduct}
               onQuickBuy={handleQuickBuy}
+              onAddToCart={handleAddToCart}
               cartCount={cartItems.length}
               onOpenCart={() => setIsCartOpen(true)}
             />
@@ -308,7 +398,7 @@ export default function App() {
           {currentTab === 'product-detail' && selectedProduct && (
             <ProductDetailPage
               product={selectedProduct}
-              onBack={() => handleNavigate('ebooks')}
+              onBack={handleBackFromDetail}
               onAddToCart={handleAddToCart}
               onDirectBuy={handleQuickBuy}
               isPurchased={user.purchasedProductIds.includes(selectedProduct.id)}

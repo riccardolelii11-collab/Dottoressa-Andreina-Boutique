@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Product } from '../types';
+import { ShoppingBag, Check } from 'lucide-react';
 
 interface EbooksPageProps {
   ebooks: Product[];
   onSelectProduct: (product: Product) => void;
-  onQuickBuy: (product: Product) => void;
+  onQuickBuy?: (product: Product) => void;
+  onAddToCart: (product: Product) => void;
   cartCount?: number;
   onOpenCart?: () => void;
 }
@@ -12,10 +14,21 @@ interface EbooksPageProps {
 export const EbooksPage: React.FC<EbooksPageProps> = ({
   ebooks,
   onSelectProduct,
-  onQuickBuy,
+  onAddToCart,
   cartCount = 0,
   onOpenCart,
 }) => {
+  const [recentlyAddedId, setRecentlyAddedId] = useState<string | null>(null);
+
+  const handleAddToCartClick = (book: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddToCart(book);
+    setRecentlyAddedId(book.id);
+    setTimeout(() => {
+      setRecentlyAddedId((prev) => (prev === book.id ? null : prev));
+    }, 1200);
+  };
+
   // Ordered strictly as in design reference
   const book1 = ebooks.find((b) => b.id.includes('salvatempo')) || ebooks[0];
   const book2 = ebooks.find((b) => b.id.includes('asporto')) || ebooks[3] || ebooks[1];
@@ -160,10 +173,25 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
                 </div>
                 <button 
                   type="button"
-                  onClick={() => book1 && onQuickBuy(book1)}
-                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                  onClick={(e) => book1 && handleAddToCartClick(book1, e)}
+                  className={`px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                    recentlyAddedId === book1?.id
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark'
+                  }`}
+                  aria-label={`Aggiungi ${book1?.title} al carrello`}
                 >
-                  Acquista
+                  {recentlyAddedId === book1?.id ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Aggiunto!</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                      <span>+ Carrello</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -207,10 +235,25 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
                 </div>
                 <button 
                   type="button"
-                  onClick={() => book2 && onQuickBuy(book2)}
-                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                  onClick={(e) => book2 && handleAddToCartClick(book2, e)}
+                  className={`px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                    recentlyAddedId === book2?.id
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark'
+                  }`}
+                  aria-label={`Aggiungi ${book2?.title} al carrello`}
                 >
-                  Acquista
+                  {recentlyAddedId === book2?.id ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Aggiunto!</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                      <span>+ Carrello</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -254,10 +297,25 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
                 </div>
                 <button 
                   type="button"
-                  onClick={() => book3 && onQuickBuy(book3)}
-                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                  onClick={(e) => book3 && handleAddToCartClick(book3, e)}
+                  className={`px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                    recentlyAddedId === book3?.id
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark'
+                  }`}
+                  aria-label={`Aggiungi ${book3?.title} al carrello`}
                 >
-                  Acquista
+                  {recentlyAddedId === book3?.id ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Aggiunto!</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                      <span>+ Carrello</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -301,10 +359,25 @@ export const EbooksPage: React.FC<EbooksPageProps> = ({
                 </div>
                 <button 
                   type="button"
-                  onClick={() => book4 && onQuickBuy(book4)}
-                  className="bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark px-4 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium tracking-wide shadow-xs transition-colors duration-200 cursor-pointer"
+                  onClick={(e) => book4 && handleAddToCartClick(book4, e)}
+                  className={`px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold tracking-wide shadow-2xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap ${
+                    recentlyAddedId === book4?.id
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-brand-teal text-white hover:bg-brand-tealDark active:bg-brand-tealDark'
+                  }`}
+                  aria-label={`Aggiungi ${book4?.title} al carrello`}
                 >
-                  Acquista
+                  {recentlyAddedId === book4?.id ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Aggiunto!</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                      <span>+ Carrello</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

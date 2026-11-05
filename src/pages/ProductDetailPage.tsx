@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Product } from '../types';
 import { 
   ArrowLeft, 
@@ -41,6 +41,71 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'content' | 'chapters'>('content');
 
+  // Apple iOS & Touch edge-swipe back gesture listener
+  const [swipeOffset, setSwipeOffset] = useState<number>(0);
+  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      // Detect touch initiating from the left edge of the screen (within 45px)
+      if (touch.clientX <= 45) {
+        touchStartRef.current = {
+          x: touch.clientX,
+          y: touch.clientY,
+          time: Date.now()
+        };
+      } else {
+        touchStartRef.current = null;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = touch.clientY - touchStartRef.current.y;
+
+      // If vertical scroll dominates early, cancel swipe
+      if (Math.abs(deltaY) > 40 && deltaX < 30) {
+        touchStartRef.current = null;
+        setSwipeOffset(0);
+        return;
+      }
+
+      if (deltaX > 0) {
+        setSwipeOffset(Math.min(deltaX, 90));
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = touch.clientY - touchStartRef.current.y;
+      const duration = Date.now() - touchStartRef.current.time;
+
+      // Swiped right more than 60px or flicked right with minimal vertical movement
+      if (deltaX > 60 || (deltaX > 35 && duration < 250 && Math.abs(deltaY) < 30)) {
+        onBack();
+      }
+
+      touchStartRef.current = null;
+      setSwipeOffset(0);
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [onBack]);
+
   const relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 3);
 
   const handleShare = () => {
@@ -51,7 +116,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-5 sm:py-8 font-sans antialiased text-brand-slate space-y-6 md:space-y-8 pb-32">
+    <div className="w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-5 sm:py-8 font-sans antialiased text-brand-slate space-y-6 md:space-y-8 pb-32 relative">
+      
+      {/* Floating iOS Edge-Swipe Back Feedback Indicator */}
+      {swipeOffset > 15 && (
+        <aside 
+          aria-hidden="true"
+          className="fixed left-0 top-1/2 -translate-y-1/2 z-50 pointer-events-none transition-transform"
+          style={{ transform: `translateY(-50%) translateX(${Math.min(swipeOffset * 0.45, 24)}px)` }}
+        >
+          <div className="w-10 h-10 rounded-full bg-slate-900/85 backdrop-blur-md text-white shadow-xl flex items-center justify-center border border-white/20">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </div>
+        </aside>
+      )}
       
       {/* 1. Top Bar: Back Action + Brand Identifier + Cart Icon with Real Count */}
       <header className="flex items-center justify-between pb-4 border-b border-brand-teal/20" data-purpose="detail-header">

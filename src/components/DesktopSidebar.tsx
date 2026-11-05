@@ -117,8 +117,8 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
                 <span className="text-xs font-semibold text-brand-slate block truncate">
                   {user.name}
                 </span>
-                <span className="text-[10px] text-brand-teal font-medium">
-                  Area Riservata
+                <span className="text-[10px] text-slate-400 font-medium">
+                  Account Personale
                 </span>
               </div>
             </div>
