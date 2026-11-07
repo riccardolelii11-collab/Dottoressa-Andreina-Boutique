@@ -156,14 +156,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           <span>Torna ai libri</span>
         </button>
 
-        {/* Center Monogram (visible on mobile to anchor the brand) */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs">
+        {/* Center Brand: circle with A on the left + Dottoressa Andreina Boutique script logo */}
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs shrink-0">
             <span className="font-serif font-bold text-brand-slate text-sm">A</span>
           </div>
-          <span className="font-serif text-sm font-semibold text-brand-slate hidden sm:inline">
-            Dott.ssa Andreina Olivieri
-          </span>
+          <img 
+            src="/assets/aistudio/logo-dottoressa-andreina-boutique.png" 
+            alt="Dottoressa Andreina Boutique" 
+            className="h-7 sm:h-8 w-auto max-w-[170px] sm:max-w-[210px] object-contain"
+          />
         </div>
 
         {/* Right actions: Share + Cart */}

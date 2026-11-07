@@ -26,6 +26,7 @@ import { NotificationToast } from './components/NotificationToast';
 import { EbooksPage } from './pages/EbooksPage';
 import { PlaceholderSectionPage } from './pages/PlaceholderSectionPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('ebooks');
@@ -57,14 +58,43 @@ export default function App() {
     setToastMessage(msg);
   };
 
+  // Restore user session if saved locally
   useEffect(() => {
-    if (toastMessage) {
-      const timer = setTimeout(() => {
-        setToastMessage(null);
-      }, 3500);
-      return () => clearTimeout(timer);
+    try {
+      const saved = localStorage.getItem('ao_current_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.email) {
+          const fullName = parsed.firstName && parsed.lastName
+            ? `${parsed.firstName} ${parsed.lastName}`.trim()
+            : (parsed.name || parsed.email.split('@')[0]);
+          setUser((prev) => ({
+            ...prev,
+            isLoggedIn: true,
+            email: parsed.email,
+            name: fullName,
+            firstName: parsed.firstName,
+            lastName: parsed.lastName,
+            registeredDate: parsed.registeredDate || prev.registeredDate
+          }));
+        }
+      }
+    } catch {
+      // ignore
     }
-  }, [toastMessage]);
+  }, []);
+
+  const handleUpdateUser = (updatedUser: Partial<UserProfile>) => {
+    setUser((prev) => {
+      const next = { ...prev, ...updatedUser };
+      try {
+        localStorage.setItem('ao_current_user', JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   // Navigation router with Browser History support (for Mouse buttons 5/6 & shortcuts)
   const handleNavigate = (tab: NavigationTab, push: boolean = true) => {
@@ -385,12 +415,17 @@ export default function App() {
             />
           )}
 
-          {/* Tab 4: Profilo (Clean minimal section awaiting user instructions/graphics) */}
+          {/* Tab 4: Profilo (Complete User Space & Authentication) */}
           {currentTab === 'profile' && (
-            <PlaceholderSectionPage
-              title="Profilo"
+            <ProfilePage
+              user={user}
+              allEbooks={ebooks}
               cartCount={cartItems.length}
               onOpenCart={() => setIsCartOpen(true)}
+              onUpdateUser={handleUpdateUser}
+              onOpenPdfReader={handleOpenPdfReader}
+              onNavigateToCatalog={() => handleNavigate('ebooks')}
+              onToast={showToast}
             />
           )}
 

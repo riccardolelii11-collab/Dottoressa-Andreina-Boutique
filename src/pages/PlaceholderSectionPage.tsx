@@ -17,14 +17,16 @@ export const PlaceholderSectionPage: React.FC<PlaceholderSectionPageProps> = ({
       {/* Mobile Top Header */}
       <header className="w-full px-6 pt-7 pb-4 bg-brand-surface border-b border-brand-teal/15 sticky top-0 z-30 backdrop-blur-md bg-opacity-95 md:hidden" data-purpose="top-navigation-mobile">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs">
+          {/* Brand Logo: Circle with A on the left + Dottoressa Andreina Boutique signature logo */}
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs shrink-0">
               <span className="font-serif font-bold text-brand-slate text-base tracking-tight">A</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-serif text-lg font-semibold tracking-wide text-brand-slate leading-none">A.O.</span>
-              <span className="text-[9px] uppercase tracking-widest text-brand-teal font-medium mt-0.5">Dott.ssa Andreina Olivieri</span>
-            </div>
+            <img 
+              src="/assets/aistudio/logo-dottoressa-andreina-boutique.png" 
+              alt="Dottoressa Andreina Boutique" 
+              className="h-8 w-auto max-w-[200px] object-contain drop-shadow-2xs"
+            />
           </div>
 
           <button 
@@ -47,14 +49,15 @@ export const PlaceholderSectionPage: React.FC<PlaceholderSectionPageProps> = ({
 
       {/* Desktop Header */}
       <div className="hidden md:flex items-center justify-between pt-8 pb-6 mb-2 border-b border-brand-teal/20" data-purpose="top-navigation-desktop">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs">
+        <div className="flex items-center space-x-3.5 min-w-0">
+          <div className="w-12 h-12 rounded-full border border-brand-teal flex items-center justify-center bg-white shadow-xs shrink-0">
             <span className="font-serif font-bold text-brand-slate text-xl tracking-tight">A</span>
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-2xl font-semibold tracking-wide text-brand-slate leading-none">A.O.</span>
-            <span className="text-[11px] uppercase tracking-widest text-brand-teal font-medium mt-1">Dott.ssa Andreina Olivieri • Boutique Digitale</span>
-          </div>
+          <img 
+            src="/assets/aistudio/logo-dottoressa-andreina-boutique.png" 
+            alt="Dottoressa Andreina Boutique" 
+            className="h-11 md:h-12 w-auto max-w-[320px] object-contain drop-shadow-2xs"
+          />
         </div>
 
         <button 

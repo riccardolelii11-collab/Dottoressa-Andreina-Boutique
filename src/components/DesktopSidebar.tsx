@@ -125,7 +125,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           </div>
         ) : (
           <button
-            onClick={onOpenAuth}
+            onClick={() => onNavigate('profile')}
             className="w-full py-2.5 bg-brand-teal hover:bg-brand-tealDark text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer"
           >
             Accedi o Registrati

@@ -125,7 +125,10 @@ export interface UserOrder {
 
 export interface UserProfile {
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
+  phone?: string;
   isLoggedIn: boolean;
   registeredDate: string;
   hasActiveSubscription: boolean;
